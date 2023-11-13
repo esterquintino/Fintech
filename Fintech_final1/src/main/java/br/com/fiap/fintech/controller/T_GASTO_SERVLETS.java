@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -52,22 +56,27 @@ public class T_GASTO_SERVLETS extends HttpServlet {
                 int cUsuario = Integer.parseInt(codUsuarioString);
                 int cCategoria = Integer.parseInt(codCategoriaString);
                 double vGasto = Double.parseDouble(valGastoString);
-                dataFormatada = new Date(format.parse(dataString).getTime());
+                LocalDate localDate = LocalDate.parse(dataString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+
+                // Configurar datGasto diretamente com a data
+                datGasto = new GregorianCalendar(
+                        localDate.getYear(),
+                        localDate.getMonthValue() - 1,  // Mês é baseado em zero
+                        localDate.getDayOfMonth()
+                );
 
                 T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, cCategoria, dGasto, vGasto, datGasto);
 
                 lista.add(p_gasto);
 
-                // Mova a configuração do datGasto para dentro do try
-                datGasto.setTime(dataFormatada);
-
                 request.setAttribute("msg", "Gasto Adicionado!");
 
-            } catch (NumberFormatException | ParseException e) {
+            } catch (NumberFormatException e) {
                 // Lide com as exceções de conversão para número e de parse
                 e.printStackTrace();
                 request.setAttribute("msg", "Erro ao adicionar gasto. Verifique os dados informados.");
             }
+
 
         } else {
             // Lide com o caso em que um dos parâmetros é nulo
