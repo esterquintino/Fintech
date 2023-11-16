@@ -19,15 +19,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.fiap.fintech.bean.T_GASTO;
+import br.com.fiap.fintech.dao.T_GastoDao;
+import br.com.fiap.fintech.exception.DBException;
+import br.com.fiap.fintech.factory.DAOFactory;
 
 @WebServlet("/p_gasto")
 public class T_GASTO_SERVLETS extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    private static List<T_GASTO> lista = new ArrayList<T_GASTO>();
+    //private static List<T_GASTO> lista = new ArrayList<T_GASTO>();
 
+    private T_GastoDao dao;
+    
+    @Override
+    public void init() throws ServletException {
+    	super.init();
+    	dao = DAOFactory.getGastoDao();
+    }
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	List<T_GASTO> lista = dao.listar();
     	request.setAttribute("gastos", lista);
         request.getRequestDispatcher("gastos-feitos.jsp").forward(request, response);
     	
@@ -65,9 +76,9 @@ public class T_GASTO_SERVLETS extends HttpServlet {
                         localDate.getDayOfMonth()
                 );
 
-                T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, cCategoria, dGasto, vGasto, datGasto);
-
-                lista.add(p_gasto);
+                T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, cCategoria, dGasto, vGasto, datGasto);      
+                dao.cadastrar(p_gasto);
+               // lista.add(p_gasto);
 
                 request.setAttribute("msg", "Gasto Adicionado!");
 
@@ -75,6 +86,9 @@ public class T_GASTO_SERVLETS extends HttpServlet {
                 // Lide com as exceções de conversão para número e de parse
                 e.printStackTrace();
                 request.setAttribute("msg", "Erro ao adicionar gasto. Verifique os dados informados.");
+            } catch (DBException e) {
+            	e.printStackTrace();
+            	request.setAttribute("erro", "Erro ao cadastrar!");
             }
 
 
