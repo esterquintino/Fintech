@@ -39,7 +39,7 @@ public class T_GASTO_DAO {
 		try {
 			PreparedStatement ps = conexao.prepareStatement(sql);
 			ps.setInt(1,gasto.getCod_usuario() );
-			ps.setInt(2,gasto.getCod_categoria() );
+			//ps.setInt(2,gasto.getCod_categoria() );
 			ps.setString(3,gasto.getDes_gasto() );
 			ps.setDouble(4,gasto.getVal_gasto() );
 			java.sql.Date data= new java.sql.Date(gasto.getDat_gasto().getTimeInMillis());
@@ -115,7 +115,7 @@ public class T_GASTO_DAO {
 			while (rs.next()) {
 				T_GASTO u = new T_GASTO();
 				u.setCod_usuario(rs.getInt("cod_usuario"));
-				u.setCod_categoria(rs.getInt("cod_categoria"));
+				//u.setCod_categoria(rs.getInt("cod_categoria"));
 				u.setDes_gasto(rs.getString("des_gasto"));
 				u.setVal_gasto(rs.getDouble("val_gasto"));
 				gastos.add(u);
@@ -148,7 +148,7 @@ public class T_GASTO_DAO {
 			if (rs.next()) {
 				u.setCod_gasto(rs.getInt("cod_gasto"));
 				u.setCod_usuario(rs.getInt("cod_usuario"));
-				u.setCod_categoria(rs.getInt("cod_categoria"));
+				//u.setCod_categoria(rs.getInt("cod_categoria"));
 				u.setDes_gasto(rs.getString("Des_gasto"));
 				u.setVal_gasto(rs.getDouble("Val_gasto"));
 			}
@@ -165,29 +165,5 @@ public class T_GASTO_DAO {
 
 	}
 	
-	//Exemplo de array lista para simular o banco de dados
-	
-//	private ArrayList<T_GASTO> gasto = new ArrayList<T_GASTO>();
-//
-//		public T_GASTO_DAO() {
-//			this.gasto.add(
-//				new T_GASTO(1, 1, 10,
-//									"Computador",
-//									3500.00f,
-//									Calendar.getInstance()
-//						));
-//			
-//			this.gasto.add(
-//					new T_GASTO(2, 2, 15,
-//										"Celular",
-//										5500.f,
-//										Calendar.getInstance()
-//							));
-//			}
-//		
-//	
-//		public ArrayList<T_GASTO> listar(){
-//			return this.gasto;
-//		}
 	
 }

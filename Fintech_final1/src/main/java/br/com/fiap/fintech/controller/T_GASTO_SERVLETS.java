@@ -18,7 +18,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.fiap.fintech.bean.Categoria;
 import br.com.fiap.fintech.bean.T_GASTO;
+import br.com.fiap.fintech.dao.CategoriaDao;
 import br.com.fiap.fintech.dao.T_GastoDao;
 import br.com.fiap.fintech.exception.DBException;
 import br.com.fiap.fintech.factory.DAOFactory;
@@ -30,42 +32,87 @@ public class T_GASTO_SERVLETS extends HttpServlet {
     //private static List<T_GASTO> lista = new ArrayList<T_GASTO>();
 
     private T_GastoDao dao;
+    private CategoriaDao categoriaDao;
     
     @Override
     public void init() throws ServletException {
     	super.init();
     	dao = DAOFactory.getGastoDao();
+    	categoriaDao = DAOFactory.getCategoriaDao();
     }
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    	List<T_GASTO> lista = dao.listar();
-    	request.setAttribute("gastos", lista);
-        request.getRequestDispatcher("gastos-feitos.jsp").forward(request, response);
+            throws ServletException, IOException  {
+    	String acao = request.getParameter("acao");
     	
+    	switch (acao) {
+    	case "listar": 
+    		listar(request, response);
+    		break;
+    	case "abrir-form-edicao" :
+    		int cod_gasto = Integer.parseInt(
+    				request.getParameter("cod_gasto"));
+    		T_GASTO gasto = dao.buscar(cod_gasto);
+    		request.setAttribute("gasto", gasto);
+    		request.getRequestDispatcher("edicao-gasto.jsp").forward(request, response);
+    	case "abrir-form-cadastro" :
+    		abrirFormCadastro(request, response);
+    		break;
+    	}
     }
+    	
+    	private void abrirFormCadastro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    		List<Categoria> lista = categoriaDao.listar();
+    		request.setAttribute("categorias", lista);
+    		request.getRequestDispatcher("home.jsp").forward(request, response);
+    	}
+ 
+	private void listar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<T_GASTO> lista = dao.listar();
+		request.setAttribute("gastos", lista);
+		request.getRequestDispatcher("gastos-feitos.jsp").forward(request, response);
+	}
 
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String dGasto = request.getParameter("des_gasto");
+    	
+    	String acao = request.getParameter("acao");
+    	
+    	switch (acao) {
+    	case "cadastrar" :
+    		cadastrar(request, response);
+    		break;
+    	case "editar" :
+    		editar(request, response);
+    		break;
+    	case "excluir" :
+    		excluir(request, response);
+    		break;
+    	}
+    }
+    
+    
+	private void cadastrar(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String dGasto = request.getParameter("des_gasto");
         Calendar datGasto = Calendar.getInstance();
 
         String codGastoString = request.getParameter("cod_gasto");
         String codUsuarioString = request.getParameter("cod_usuario");
-        String codCategoriaString = request.getParameter("cod_categoria");
+        //String codCategoriaString = request.getParameter("cod_categoria");
         String valGastoString = request.getParameter("val_gasto");
         String dataString = request.getParameter("dat_gasto");
         Date dataFormatada = null;
 
         // Verifica se os valores não são nulos antes de convertê-los
-        if (codGastoString != null && codUsuarioString != null && codCategoriaString != null && valGastoString != null
+        if (codGastoString != null && codUsuarioString != null && valGastoString != null
                 && dataString != null) {
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 
             try {
                 int cGasto = Integer.parseInt(codGastoString);
                 int cUsuario = Integer.parseInt(codUsuarioString);
-                int cCategoria = Integer.parseInt(codCategoriaString);
+                //int cCategoria = Integer.parseInt(codCategoriaString);
                 double vGasto = Double.parseDouble(valGastoString);
                 LocalDate localDate = LocalDate.parse(dataString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
@@ -73,13 +120,17 @@ public class T_GASTO_SERVLETS extends HttpServlet {
                 datGasto = new GregorianCalendar(
                         localDate.getYear(),
                         localDate.getMonthValue() - 1,  // Mês é baseado em zero
-                        localDate.getDayOfMonth()
-                );
+                        localDate.getDayOfMonth());
+                
+                int cod_categoria = Integer.parseInt(request.getParameter("categoria"));
+                
+                Categoria categoria = new Categoria();
+                categoria.setCod_categoria(cod_categoria);
 
-                T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, cCategoria, dGasto, vGasto, datGasto);      
+                T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, dGasto, vGasto, datGasto);
+                p_gasto.setCategoria(categoria);
                 dao.cadastrar(p_gasto);
-               // lista.add(p_gasto);
-
+               
                 request.setAttribute("msg", "Gasto Adicionado!");
 
             } catch (NumberFormatException e) {
@@ -98,7 +149,46 @@ public class T_GASTO_SERVLETS extends HttpServlet {
             request.setAttribute("msg", "Erro ao adicionar gasto. Verifique os dados informados.");
         }
 
-        request.getRequestDispatcher("home.jsp").forward(request, response);
-    }
+       // request.getRequestDispatcher("home.jsp").forward(request, response);
+        abrirFormCadastro(request, response);
+	}
+	
+	private void editar(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		 try {
+             int cGasto = Integer.parseInt(request.getParameter("cod_gasto"));
+             int cUsuario = Integer.parseInt(request.getParameter("cod_usuario"));
+            // int cCategoria = Integer.parseInt(request.getParameter("cod_categoria"));
+             String dGasto = request.getParameter("des_gasto");
+             double vGasto = Double.parseDouble(request.getParameter("val_gasto"));
+             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+             Calendar dat_gasto = Calendar.getInstance();
+             dat_gasto.setTime(format.parse(request.getParameter("dat_gasto")));
+
+             T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, dGasto, vGasto, dat_gasto);      
+             dao.atualizar(p_gasto);
+            
+             request.setAttribute("msg", "Gasto Atualizado!");
+         } catch (Exception e) {
+             // Lide com as exceções de conversão para número e de parse
+             e.printStackTrace();
+             request.setAttribute("msg", "Erro ao atualizar gasto. Verifique os dados informados.");
+         }
+		listar(request, response);
+	}
+	
+	private void excluir(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		int cod_gasto = Integer.parseInt(request.getParameter("cod_gasto"));
+		try {
+			dao.remover(cod_gasto);
+			request.setAttribute("msg", "Gasto Removido");
+		} catch(DBException e) {
+			e.printStackTrace();
+			request.setAttribute("erro", "Erro ao atualizar");
+		}
+		listar(request, response);
+	}
 
 }

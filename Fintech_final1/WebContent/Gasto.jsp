@@ -17,10 +17,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="home.jsp">Cadastrar Gastos</a>
+          <a class="nav-link" href="p_gasto?acao=abrir-form-cadastro">Cadastrar Gastos</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="p_gasto">Tabela de Gastos</a>
+          <a class="nav-link" href="p_gasto?acao=listar">Tabela de Gastos</a>
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
