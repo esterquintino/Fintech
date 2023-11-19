@@ -10,7 +10,6 @@ public class T_GASTO implements Serializable{
 	
 	private int cod_gasto;
 	private int cod_usuario;
-	//private int cod_categoria;
 	private String des_gasto;
 	private double val_gasto;
 	private Calendar dat_gasto;
@@ -28,7 +27,6 @@ public class T_GASTO implements Serializable{
 		super();
 		this.cod_gasto = cod_gasto;
 		this.cod_usuario = cod_usuario;
-		//this.cod_categoria = cod_categoria;
 		this.des_gasto = des_gasto;
 		this.val_gasto = val_gasto;
 		this.dat_gasto = dat_gasto;
@@ -49,12 +47,7 @@ public class T_GASTO implements Serializable{
 	public void setCod_usuario(int cod_usuario) {
 		this.cod_usuario = cod_usuario;
 	}
-//	public int getCod_categoria() {
-//		return cod_categoria;
-//	}
-//	public void setCod_categoria(int cod_categoria) {
-//		this.cod_categoria = cod_categoria;
-//	}
+
 	public String getDes_gasto() {
 		return des_gasto;
 	}

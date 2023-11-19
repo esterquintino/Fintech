@@ -1,6 +1,23 @@
 <%@ page import="java.util.*" language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="ISO-8859-1"%>
+	pageEncoding="ISO-8859-1"%>	
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+		<%@ page import="java.io.*" %>
+<%@ page import="javax.servlet.*" %>
+<%@ page import="javax.servlet.http.*" %>
+
+<%
+    // Verifica se a flag de redirecionamento está presente
+    Boolean redirect = (Boolean) request.getAttribute("redirect");
+    
+    if (redirect != null && redirect) {
+        // Limpa a flag
+        request.setAttribute("redirect", false);
+        
+        // Realiza o redirecionamento
+        response.sendRedirect("home.jsp");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +31,7 @@
 		<h1>Tabela de Gastos</h1>
 		
 		<c:if test="${not empty msg}">
-			<div class="alert alert-sucess">
+			<div class="alert alert-success">
 				${msg}
 			</div>
 		</c:if>
@@ -56,6 +73,8 @@
 			<input type="submit" value="Enviar" class="btn btn-primary">
 		</form>
 	</div>
+	
+
 
 	<%@ include file="footer.jsp"%>
 </body>

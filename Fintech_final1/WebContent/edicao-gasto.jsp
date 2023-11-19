@@ -36,8 +36,8 @@
 					name="cod_usuario" id="id-cod-usuario" class="form-control" value="${gasto.cod_usuario}">
 			</div>
 			<div class="form-group">
-				<label for="id-cod-categoria">Codigo Categoria</label> <input type="number"
-					name="cod_categoria" id="id-cod-categoria" class="form-control" value="${gasto.cod_categoria}">
+				<label for="id-categoria">Codigo Categoria</label> <input type="number"
+					name="categoria" id="id-categoria" class="form-control" value="${gasto.categoria.cod_categoria}">
 			</div>
 			<div class="form-group">
 				<label for="id-des-gasto">Descrição Gasto</label> <input type="text"

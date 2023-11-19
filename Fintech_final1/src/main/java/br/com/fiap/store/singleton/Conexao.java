@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import br.com.fiap.fintech.exception.DBException;
+
 public class Conexao {
 
     private static final String URL = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl";
@@ -12,35 +14,34 @@ public class Conexao {
 
     private static Connection conexao;
 
-    // Construtor privado para evitar instanciação externa
     private Conexao() {
     }
 
-    // Método para obter a instância única da conexão
-    public static Connection obterConexao() throws SQLException {
-        if (conexao == null || conexao.isClosed()) {
+    public static Connection obterConexao() throws DBException {
+        if (conexao == null || estaFechada()) {
             inicializarConexao();
+        } else if (estaFechada()) {
+            System.out.println("A conexão está fechada. Tentando reabrir a conexão...");
+            reabrirConexao();
         }
+
+        System.out.println("Obtendo conexão...");
         return conexao;
     }
 
-    private static void inicializarConexao() throws SQLException {
+    private static void inicializarConexao() throws DBException {
         try {
             Class.forName("oracle.jdbc.driver.OracleDriver");
             conexao = DriverManager.getConnection(URL, USUARIO, SENHA);
             System.out.println("Conexão estabelecida com sucesso.");
-        } catch (ClassNotFoundException e) {
-            System.err.println("Erro: Classe do driver não encontrada.");
+        } catch (ClassNotFoundException | SQLException e) {
+            System.err.println("Erro ao inicializar a conexão.");
             e.printStackTrace();
-            throw new SQLException("Erro ao inicializar a conexão.", e);
-        } catch (SQLException e) {
-            System.err.println("Erro: Não foi possível estabelecer a conexão.");
-            e.printStackTrace();
-            throw new SQLException("Erro ao inicializar a conexão.", e);
+            throw new DBException("Erro ao inicializar a conexão.", e);
         }
     }
 
-    public static void fecharConexao() {
+    public static void fecharConexao() throws DBException {
         if (conexao != null) {
             try {
                 conexao.close();
@@ -48,8 +49,23 @@ public class Conexao {
             } catch (SQLException e) {
                 System.err.println("Erro ao fechar a conexão.");
                 e.printStackTrace();
+                throw new DBException("Erro ao fechar a conexão.", e);
             }
         }
     }
 
+    public static boolean estaFechada() throws DBException {
+        try {
+            return conexao == null || conexao.isClosed();
+        } catch (SQLException e) {
+            System.err.println("Erro ao verificar se a conexão está fechada.");
+            e.printStackTrace();
+            throw new DBException("Erro ao verificar se a conexão está fechada.", e);
+        }
+    }
+
+    public static void reabrirConexao() throws DBException {
+        fecharConexao();
+        inicializarConexao();
+    }
 }

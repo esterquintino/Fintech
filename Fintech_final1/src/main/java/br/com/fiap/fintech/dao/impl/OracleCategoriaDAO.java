@@ -19,13 +19,13 @@ public class OracleCategoriaDAO implements CategoriaDao {
 	public OracleCategoriaDAO(Connection conexao) {
         this.conexao = conexao;
     }
-	
+
 	@Override
 	public List<Categoria> listar() {
-	    String sql = "SELECT * FROM T_GASTO ORDER BY COD_GASTO";
-	    List<Categoria> lista = new ArrayList<Categoria>();
+	    String sql = "SELECT * FROM T_CATEGORIA ORDER BY COD_CATEGORIA"; // Correção na consulta SQL
+	    List<Categoria> lista = new ArrayList<>();
 
-	    try (PreparedStatement ps = conexao.prepareStatement("SELECT * FROM T_CATEGORIA");
+	    try (PreparedStatement ps = conexao.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
 
 	        while (rs.next()) {
@@ -37,18 +37,13 @@ public class OracleCategoriaDAO implements CategoriaDao {
 	            lista.add(cat);
 	        }
 	    } catch (SQLException e) {
-	        System.out.println("Erro na adição da categoria");
+	        System.out.println("Erro ao obter categorias");
 	        e.printStackTrace();
-	    } finally {
-	        // Certifique-se de fechar a conexão fora do loop while
-	        try {
-	            if (conexao != null) conexao.close();
-	        } catch (SQLException e) {
-	            e.printStackTrace();
-	        }
 	    }
 
 	    return lista;
 	}
+
+
 
 }

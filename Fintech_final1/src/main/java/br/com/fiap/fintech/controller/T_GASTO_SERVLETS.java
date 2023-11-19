@@ -1,7 +1,9 @@
 package br.com.fiap.fintech.controller;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -24,12 +26,12 @@ import br.com.fiap.fintech.dao.CategoriaDao;
 import br.com.fiap.fintech.dao.T_GastoDao;
 import br.com.fiap.fintech.exception.DBException;
 import br.com.fiap.fintech.factory.DAOFactory;
+import br.com.fiap.store.singleton.Conexao;
 
 @WebServlet("/p_gasto")
 public class T_GASTO_SERVLETS extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    //private static List<T_GASTO> lista = new ArrayList<T_GASTO>();
 
     private T_GastoDao dao;
     private CategoriaDao categoriaDao;
@@ -60,11 +62,31 @@ public class T_GASTO_SERVLETS extends HttpServlet {
     	}
     }
     	
-    	private void abrirFormCadastro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    		List<Categoria> lista = categoriaDao.listar();
-    		request.setAttribute("categorias", lista);
-    		request.getRequestDispatcher("home.jsp").forward(request, response);
-    	}
+    private void abrirFormCadastro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        List<Categoria> lista = null;
+        
+        try {
+            lista = categoriaDao.listar();
+        } catch (Exception e) {
+            System.err.println("Erro ao obter categorias: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        request.setAttribute("categorias", lista);
+
+        // Em vez de redirecionar diretamente, vamos armazenar uma flag no request
+        request.setAttribute("redirect", true);
+        
+        // Vamos encaminhar para a JSP
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+    }
+
+
+
+
+
+
+
  
 	private void listar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<T_GASTO> lista = dao.listar();
@@ -159,7 +181,6 @@ public class T_GASTO_SERVLETS extends HttpServlet {
 		 try {
              int cGasto = Integer.parseInt(request.getParameter("cod_gasto"));
              int cUsuario = Integer.parseInt(request.getParameter("cod_usuario"));
-            // int cCategoria = Integer.parseInt(request.getParameter("cod_categoria"));
              String dGasto = request.getParameter("des_gasto");
              double vGasto = Double.parseDouble(request.getParameter("val_gasto"));
              SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
