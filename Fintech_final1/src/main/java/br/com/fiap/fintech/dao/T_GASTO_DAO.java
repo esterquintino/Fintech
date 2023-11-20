@@ -32,83 +32,86 @@ public class T_GASTO_DAO {
 
 	public void gravar(T_GASTO gasto) {
 		
-		String sql = "INSERT INTO T_GASTO (cod_gasto, cod_usuario, cod_categoria, des_gasto, val_gasto, dt_datagasto)"
-				+ "VALUES (sq_gasto.nextval, ?, ?, ?, ?,?)";
+		String sql = "INSERT INTO TGF_GASTO (cod_gasto, cod_usuario, des_gasto, val_gasto, dt_saida, cod_categoria)"
+				+ "VALUES (SEQ_GASTO.NEXTVAL, ?, ?, ?, ?,?)";
 		
 		
-		try {
-			PreparedStatement ps = conexao.prepareStatement(sql);
+		try (PreparedStatement ps = conexao.prepareStatement(sql)) {
 			ps.setInt(1,gasto.getCod_usuario() );
-			//ps.setInt(2,gasto.getCod_categoria() );
-			ps.setString(3,gasto.getDes_gasto() );
-			ps.setDouble(4,gasto.getVal_gasto() );
+			ps.setString(2,gasto.getDes_gasto() );
+			ps.setDouble(3,gasto.getVal_gasto() );
 			java.sql.Date data= new java.sql.Date(gasto.getDat_gasto().getTimeInMillis());
-			ps.setDate(5, data);
+			ps.setDate(4, data);
+			ps.setInt(5,gasto.getCategoria().getCod_categoria() );
 							
 			System.out.println("Gasto 1 cadastrado corretamente!");
-			ps.execute();		
+			ps.executeUpdate();		
 			ps.close();		
 			
 		} catch (SQLException e) {
 			System.out.println("Erro no cadastro do gasto 1");
 			e.printStackTrace();
-		} 
+		} finally {
+			try {
+				conexao.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 	
 	public void excluir(T_GASTO gasto) {
-		
-//		@Override
-//		public void remover(int codigo) throws DBException {
-//				PreparedStatement stmt = null;
+		String sql = "DELETE FROM TGF_GASTO WHERE cod_gasto = ?";
 
-				try {
-					String sql = "DELETE FROM T_GASTO WHERE cod_gasto = ?";
-					PreparedStatement ps = conexao.prepareStatement(sql);
-					ps = conexao.prepareStatement(sql);
+		try (PreparedStatement ps = conexao.prepareStatement(sql)) {
 					ps.setInt(1, gasto.getCod_gasto());
 					ps.executeUpdate();
 				} catch (SQLException e) {
 					e.printStackTrace();
+				} finally { 
+					try {
+						conexao.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
 				
 	}
 
 
 	public void atualizar(T_GASTO gasto) {
+		String sql = "UPDATE TGF_GASTO SET des_gasto = ?, val_gasto = ?, dt_saida = ?, cod_categoria = ? WHERE cod_gasto = ?";
 		
-//		@Override
-//		public void atualizar(Produto produto) throws DBException {
-//			PreparedStatement stmt = null;
-
-			try {
-				String sql = "UPDATE T_GASTOSET des_gasto = ?, val_gasto = ?, dt_datagasto = ? WHERE cod_gasto = ?";
-				PreparedStatement ps = conexao.prepareStatement(sql);
+		try (PreparedStatement ps = conexao.prepareStatement(sql)) {
 				ps.setString(1, gasto.getDes_gasto());
 				ps.setDouble(2, gasto.getVal_gasto());
 				java.sql.Date data= new java.sql.Date(gasto.getDat_gasto().getTimeInMillis());
 				ps.setDate(3, data);
-				ps.setInt(4, gasto.getCod_gasto());
+				ps.setInt(4, gasto.getCategoria().getCod_categoria());
+				ps.setInt(5, gasto.getCod_gasto());
 
 				ps.executeUpdate();
 				ps.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
-			} finally {
+			} finally { 
+				try {
+					conexao.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 
 	}
 	
-	public List<T_GASTO> listarTodos() {
+	public List<T_GASTO> listar() {
 		
-		String sql ="SELECT * FROM T_GASTO ORDER BY COD_GASTO";
+		String sql ="SELECT * FROM TGF_GASTO ORDER BY COD_GASTO";
 		List<T_GASTO> gastos = null;
 		
-		try {
-			PreparedStatement ps = conexao.prepareStatement(sql);
-			
-			ResultSet rs = ps.executeQuery();
-			
+		try (PreparedStatement ps = conexao.prepareStatement(sql);
+		         ResultSet rs = ps.executeQuery()) {		
 			
 			gastos = new ArrayList();
 			
@@ -122,27 +125,31 @@ public class T_GASTO_DAO {
 			}			
 	
 			ps.close();
-			conexao.close();
 		
 		} catch (SQLException u) {
 			System.out.println("Erro no na exibição de todos os gastos");
 			u.printStackTrace();
-		} 
+		} finally { 
+			try {
+				conexao.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		return gastos;
 
 	}
 	
-	public void buscarGastoPorCod(int cod_gasto, int cod_usuario) {
+	public void buscar(int cod_gasto, int cod_usuario) {
 		
-		String sql = "select * from t_gasto where cod_gasto = ? and cod_usuario = ?";
-		
-		try {
-			PreparedStatement ps = conexao.prepareStatement(sql);
-			
+		String sql = "SELECT * FROM TGF_GASTO INNER JOIN TGF_CATEGORIA ON TGF_GASTO.COD_CATEGORIA = TGF_CATEGORIA.COD_CATEGORIA WHERE TGF_GASTO.COD_GASTO = ?";
+		ResultSet rs = null;
+		try (PreparedStatement ps = conexao.prepareStatement(sql))
+				 {
+						
 			ps.setInt(1, cod_gasto);
-			
-			ResultSet rs = ps.executeQuery();
+			rs = ps.executeQuery();
 			T_GASTO u = new T_GASTO();
 			
 			if (rs.next()) {
@@ -156,12 +163,17 @@ public class T_GASTO_DAO {
 			System.out.println(u);
 					
 			ps.close();
-			conexao.close();
 		
 		} catch (SQLException u) {
 			System.out.println("Erro no na exibição do usuario");
 			u.printStackTrace();
-		} 
+		} finally { 
+			try {
+				conexao.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 	

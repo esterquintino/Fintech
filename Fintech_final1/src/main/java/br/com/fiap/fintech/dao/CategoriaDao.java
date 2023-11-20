@@ -1,9 +1,9 @@
 package br.com.fiap.fintech.dao;
 
 import java.util.List;
-import br.com.fiap.fintech.bean.Categoria;
+import br.com.fiap.fintech.bean.T_CATEGORIA;
 
 public interface CategoriaDao {
 
-	List<Categoria> listar();
+	List<T_CATEGORIA> listar();
 }

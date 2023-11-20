@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import br.com.fiap.fintech.bean.Categoria;
+import br.com.fiap.fintech.bean.T_CATEGORIA;
 import br.com.fiap.fintech.bean.T_GASTO;
 import br.com.fiap.fintech.dao.T_GastoDao;
 import br.com.fiap.fintech.exception.DBException;
@@ -26,14 +26,14 @@ public class OracleT_GastoDao implements T_GastoDao {
     @Override
     public void cadastrar(T_GASTO gasto) throws DBException {
     	try (PreparedStatement ps = this.conexao.prepareStatement(
-    	        "INSERT INTO T_GASTO (cod_gasto, cod_usuario, cod_categoria, des_gasto, val_gasto, dt_datagasto) VALUES (sq_gasto.nextval, ?, ?, ?, ?, ?)")) {
+    	        "INSERT INTO TGF_GASTO (cod_gasto, cod_usuario, des_gasto, val_gasto, dt_saida, cod_categoria,) VALUES (sq_gasto.nextval, ?, ?, ?, ?, ?)")) {
 
             ps.setInt(1, gasto.getCod_usuario());
-            ps.setInt(2, gasto.getCategoria().getCod_categoria());
-            ps.setString(3, gasto.getDes_gasto());
-            ps.setDouble(4, gasto.getVal_gasto());
+            ps.setString(2, gasto.getDes_gasto());
+            ps.setDouble(3, gasto.getVal_gasto());
             java.sql.Date data = new java.sql.Date(gasto.getDat_gasto().getTimeInMillis());
-            ps.setDate(5, data);
+            ps.setDate(4, data);
+            ps.setInt(5, gasto.getCod_categoria());
 
             System.out.println("Gasto cadastrado corretamente!");
             ps.execute();
@@ -56,7 +56,7 @@ public class OracleT_GastoDao implements T_GastoDao {
             ps.setDate(3, data);
 
             // Adicionando verificação de categoria nula
-            Categoria categoria = gasto.getCategoria();
+            T_CATEGORIA categoria = gasto.getCategoria();
             if (categoria != null) {
                 ps.setInt(4, categoria.getCod_categoria());
             } else {
@@ -90,14 +90,14 @@ public class OracleT_GastoDao implements T_GastoDao {
         PreparedStatement ps = null;
 
         try {
-            ps = conexao.prepareStatement("SELECT * FROM T_GASTO INNER JOIN T_CATEGORIA ON T_GASTO.COD_CATEGORIA = T_CATEGORIA.COD_CATEGORIA WHERE T_GASTO.COD_GASTO = ?");
+            ps = conexao.prepareStatement("SELECT * FROM TGF_GASTO INNER JOIN TGF_CATEGORIA ON TGF_GASTO.COD_CATEGORIA = TGF_CATEGORIA.COD_CATEGORIA WHERE T_GASTO.COD_GASTO = ?");
             ps.setInt(1, cod_gasto);
             rs = ps.executeQuery();
 
             if (rs.next()) {
                 int cod_gasto1 = rs.getInt("cod_gasto");
                 int cod_usuario = rs.getInt("cod_usuario");
-                String des_gasto = rs.getString("Des_gasto");
+                String des_gasto = rs.getString("des_gasto");
                 double val_gasto = rs.getDouble("Val_gasto");
                 java.sql.Date data = rs.getDate("dt_datagasto");
                 Calendar dat_gasto = Calendar.getInstance();
@@ -107,9 +107,9 @@ public class OracleT_GastoDao implements T_GastoDao {
                 String nom_categoria = rs.getString("NOM_CATEGORIA");
                 String des_categoria = rs.getString("DES_CATEGORIA");
 
-                gasto = new T_GASTO(cod_gasto1, cod_usuario, des_gasto, val_gasto, dat_gasto);
-                Categoria categoria = new Categoria(cod_categoria, nom_categoria, des_categoria);
-                gasto.setCategoria(categoria);
+                gasto = new T_GASTO(cod_gasto1, cod_usuario, des_gasto, val_gasto, dat_gasto, cod_categoria);
+                T_CATEGORIA categoria = new T_CATEGORIA(cod_categoria, nom_categoria, des_categoria);
+                gasto.setCategoria(cod_categoria);
             }
         } catch (SQLException u) {
             u.printStackTrace();
@@ -132,7 +132,7 @@ public class OracleT_GastoDao implements T_GastoDao {
 
     @Override
     public List<T_GASTO> listar() {
-        String sql = "SELECT * FROM T_GASTO INNER JOIN T_CATEGORIA ON T_GASTO.COD_CATEGORIA = T_CATEGORIA.COD_CATEGORIA ORDER BY COD_GASTO";
+        String sql = "SELECT * FROM TGF_GASTO INNER JOIN TGF_CATEGORIA ON TGF_GASTO.COD_CATEGORIA = TGF_CATEGORIA.COD_CATEGORIA ORDER BY COD_GASTO";
         List<T_GASTO> gastos = new ArrayList<>();
 
         try {
@@ -156,9 +156,9 @@ public class OracleT_GastoDao implements T_GastoDao {
                     String nom_categoria = rs.getString("NOM_CATEGORIA");
                     String des_categoria = rs.getString("DES_CATEGORIA");
 
-                    T_GASTO gasto = new T_GASTO(cod_gasto1, cod_usuario, des_gasto, val_gasto, dat_gasto);
-                    Categoria categoria = new Categoria(cod_categoria, nom_categoria, des_categoria);
-                    gasto.setCategoria(categoria);
+                    T_GASTO gasto = new T_GASTO(cod_gasto1, cod_usuario, des_gasto, val_gasto, dat_gasto, cod_categoria);
+                    T_CATEGORIA categoria = new T_CATEGORIA(cod_categoria, nom_categoria, des_categoria);
+                    gasto.setCod_categoria(cod_categoria);
                     gastos.add(gasto);
                 }
             }

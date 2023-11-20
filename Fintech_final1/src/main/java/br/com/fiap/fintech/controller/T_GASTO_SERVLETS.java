@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.com.fiap.fintech.bean.Categoria;
+import br.com.fiap.fintech.bean.T_CATEGORIA;
 import br.com.fiap.fintech.bean.T_GASTO;
 import br.com.fiap.fintech.dao.CategoriaDao;
 import br.com.fiap.fintech.dao.T_GastoDao;
@@ -63,7 +63,7 @@ public class T_GASTO_SERVLETS extends HttpServlet {
     }
     	
     private void abrirFormCadastro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Categoria> lista = null;
+        List<T_CATEGORIA> lista = null;
         
         try {
             lista = categoriaDao.listar();
@@ -121,7 +121,7 @@ public class T_GASTO_SERVLETS extends HttpServlet {
 
         String codGastoString = request.getParameter("cod_gasto");
         String codUsuarioString = request.getParameter("cod_usuario");
-        //String codCategoriaString = request.getParameter("cod_categoria");
+        String codCategoriaString = request.getParameter("cod_categoria");
         String valGastoString = request.getParameter("val_gasto");
         String dataString = request.getParameter("dat_gasto");
         Date dataFormatada = null;
@@ -134,7 +134,7 @@ public class T_GASTO_SERVLETS extends HttpServlet {
             try {
                 int cGasto = Integer.parseInt(codGastoString);
                 int cUsuario = Integer.parseInt(codUsuarioString);
-                //int cCategoria = Integer.parseInt(codCategoriaString);
+                int cCategoria = Integer.parseInt(codCategoriaString);
                 double vGasto = Double.parseDouble(valGastoString);
                 LocalDate localDate = LocalDate.parse(dataString, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
@@ -144,14 +144,14 @@ public class T_GASTO_SERVLETS extends HttpServlet {
                         localDate.getMonthValue() - 1,  // Mês é baseado em zero
                         localDate.getDayOfMonth());
                 
-                int cod_categoria = Integer.parseInt(request.getParameter("categoria"));
-                
-                Categoria categoria = new Categoria();
-                categoria.setCod_categoria(cod_categoria);
+//                int cod_categoria = Integer.parseInt(request.getParameter("categoria"));
+//                
+//                T_CATEGORIA categoria = new T_CATEGORIA();
+//                categoria.setCod_categoria(cod_categoria);
 
-                T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, dGasto, vGasto, datGasto);
-                p_gasto.setCategoria(categoria);
-                dao.cadastrar(p_gasto);
+                T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, dGasto, vGasto, datGasto, cCategoria);
+//                p_gasto.setCategoria(categoria);
+//                dao.cadastrar(p_gasto);
                
                 request.setAttribute("msg", "Gasto Adicionado!");
 
@@ -159,10 +159,11 @@ public class T_GASTO_SERVLETS extends HttpServlet {
                 // Lide com as exceções de conversão para número e de parse
                 e.printStackTrace();
                 request.setAttribute("msg", "Erro ao adicionar gasto. Verifique os dados informados.");
-            } catch (DBException e) {
-            	e.printStackTrace();
-            	request.setAttribute("erro", "Erro ao cadastrar!");
-            }
+            } 
+//            catch (DBException e) {
+//            	e.printStackTrace();
+//            	request.setAttribute("erro", "Erro ao cadastrar!");
+//            }
 
 
         } else {
@@ -186,8 +187,9 @@ public class T_GASTO_SERVLETS extends HttpServlet {
              SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
              Calendar dat_gasto = Calendar.getInstance();
              dat_gasto.setTime(format.parse(request.getParameter("dat_gasto")));
+             int cCategoria = Integer.parseInt("cod_categoria");
 
-             T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, dGasto, vGasto, dat_gasto);      
+             T_GASTO p_gasto = new T_GASTO(cGasto, cUsuario, dGasto, vGasto, dat_gasto, cCategoria);      
              dao.atualizar(p_gasto);
             
              request.setAttribute("msg", "Gasto Atualizado!");

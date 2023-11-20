@@ -2,6 +2,7 @@ package br.com.fiap.fintech.bean;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Calendar;
 
 public class T_GASTO extends T_CATEGORIA implements Serializable{
 	
@@ -11,12 +12,12 @@ public class T_GASTO extends T_CATEGORIA implements Serializable{
 	private int cod_usuario;
 	private String des_gasto;
 	private double val_gasto;
-	private LocalDate dat_gasto;
-	private int cod_categoria;
+	private Calendar dat_gasto;
+	private T_CATEGORIA cod_categoria;
 	
 	//Contrutores
 	
-	public T_GASTO(int cod_gasto, int cod_usuario, String des_gasto, double val_gasto, LocalDate dat_gasto, int cod_categoria) {
+	public T_GASTO(int cod_gasto, int cod_usuario, String des_gasto, double val_gasto, Calendar dat_gasto, T_CATEGORIA cod_categoria) {
 		super();
 		this.cod_gasto = cod_gasto;
 		this.cod_usuario = cod_usuario;
@@ -55,16 +56,16 @@ public class T_GASTO extends T_CATEGORIA implements Serializable{
 	public void setVal_gasto(double val_gasto) {
 		this.val_gasto = val_gasto;
 	}
-	public LocalDate getDat_gasto() {
+	public Calendar getDat_gasto() {
 		return dat_gasto;
 	}
-	public void setDat_gasto(LocalDate dat_gasto) {
+	public void setDat_gasto(Calendar dat_gasto) {
 		this.dat_gasto = dat_gasto;
 	}
-	public int getCategoria() {
+	public T_CATEGORIA getCategoria() {
 		return cod_categoria;
 	}
-	public void setCategoria(int cod_categoria) {
+	public void setT_CATEGORIA(T_CATEGORIA cod_categoria) {
 		this.cod_categoria = cod_categoria;
 	}
 	

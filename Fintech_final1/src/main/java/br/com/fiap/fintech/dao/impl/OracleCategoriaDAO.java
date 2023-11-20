@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import br.com.fiap.fintech.bean.Categoria;
+import br.com.fiap.fintech.bean.T_CATEGORIA;
 import br.com.fiap.fintech.bean.T_GASTO;
 import br.com.fiap.fintech.dao.CategoriaDao;
 
@@ -21,9 +21,9 @@ public class OracleCategoriaDAO implements CategoriaDao {
     }
 
 	@Override
-	public List<Categoria> listar() {
-	    String sql = "SELECT * FROM T_CATEGORIA ORDER BY COD_CATEGORIA"; // Correção na consulta SQL
-	    List<Categoria> lista = new ArrayList<>();
+	public List<T_CATEGORIA> listar() {
+	    String sql = "SELECT * FROM TGF_CATEGORIA ORDER BY COD_CATEGORIA";
+	    List<T_CATEGORIA> lista = new ArrayList<>();
 
 	    try (PreparedStatement ps = conexao.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
@@ -33,14 +33,22 @@ public class OracleCategoriaDAO implements CategoriaDao {
 	            String nom_categoria = rs.getString("nom_categoria");
 	            String des_categoria = rs.getString("des_categoria");
 
-	            Categoria cat = new Categoria(cod_categoria, nom_categoria, des_categoria);
-	            lista.add(cat);
+	            T_CATEGORIA categoria = new T_CATEGORIA(cod_categoria, nom_categoria, des_categoria);
+	            lista.add(categoria);
 	        }
+	        
+	        ps.close();
+	        rs.close();
 	    } catch (SQLException e) {
 	        System.out.println("Erro ao obter categorias");
 	        e.printStackTrace();
+	    } finally {
+	    	try {	    		
+	    		conexao.close();
+	    	} catch (SQLException e) {
+	    		e.printStackTrace();
+	    	}
 	    }
-
 	    return lista;
 	}
 
