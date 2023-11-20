@@ -1,10 +1,9 @@
 package br.com.fiap.fintech.bean;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.util.Calendar;
+import java.time.LocalDate;
 
-public class T_GASTO implements Serializable{
+public class T_GASTO extends T_CATEGORIA implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -12,29 +11,26 @@ public class T_GASTO implements Serializable{
 	private int cod_usuario;
 	private String des_gasto;
 	private double val_gasto;
-	private Calendar dat_gasto;
-	private Categoria categoria;
+	private LocalDate dat_gasto;
+	private int cod_categoria;
 	
+	//Contrutores
 	
-	
-	public Categoria getCategoria() {
-		return categoria;
-	}
-	public void setCategoria(Categoria categoria) {
-		this.categoria = categoria;
-	}
-	public T_GASTO(int cod_gasto, int cod_usuario, String des_gasto, double val_gasto, Calendar dat_gasto) {
+	public T_GASTO(int cod_gasto, int cod_usuario, String des_gasto, double val_gasto, LocalDate dat_gasto, int cod_categoria) {
 		super();
 		this.cod_gasto = cod_gasto;
 		this.cod_usuario = cod_usuario;
 		this.des_gasto = des_gasto;
 		this.val_gasto = val_gasto;
 		this.dat_gasto = dat_gasto;
+		this.cod_categoria = cod_categoria;
 	}
 	public T_GASTO() {
 		super();
-		
 	}
+	
+	//Getter e Setters
+	
 	public int getCod_gasto() {
 		return cod_gasto;
 	}
@@ -47,7 +43,6 @@ public class T_GASTO implements Serializable{
 	public void setCod_usuario(int cod_usuario) {
 		this.cod_usuario = cod_usuario;
 	}
-
 	public String getDes_gasto() {
 		return des_gasto;
 	}
@@ -60,23 +55,23 @@ public class T_GASTO implements Serializable{
 	public void setVal_gasto(double val_gasto) {
 		this.val_gasto = val_gasto;
 	}
-	public Calendar getDat_gasto() {
+	public LocalDate getDat_gasto() {
 		return dat_gasto;
 	}
-	public void setDat_gasto(Calendar dat_gasto) {
+	public void setDat_gasto(LocalDate dat_gasto) {
 		this.dat_gasto = dat_gasto;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+	public int getCategoria() {
+		return cod_categoria;
 	}
-
+	public void setCategoria(int cod_categoria) {
+		this.cod_categoria = cod_categoria;
+	}
 	
 	
-	
-	
-//	@Override
-//	public String toString() {
-//		return "T_GASTO [cod_gasto=" + cod_gasto +", cod_usuario=" + cod_usuario + ", cod_categoria=" + cod_categoria + ", des_gasto=" + des_gasto
-//				+ ", val_gasto=" + val_gasto + "]";
-//	}
+	@Override
+	public String toString() {
+		return "T_GASTO [cod_gasto=" + cod_gasto +", cod_usuario=" + cod_usuario + ", cod_categoria=" 
+				+ cod_categoria + ", des_gasto=" + des_gasto + ", val_gasto=" + val_gasto + "]";
+	}
 }

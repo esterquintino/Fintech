@@ -1,7 +1,7 @@
 package br.com.fiap.fintech.bean;
 
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.LocalDate;
 
 public class T_RECEITA implements Serializable{
 	
@@ -12,12 +12,12 @@ public class T_RECEITA implements Serializable{
 	private int cod_categoria;
 	private String des_receita;
 	private double val_receita;
-	private Calendar dat_receita;
+	private LocalDate dat_receita;
 	
-	
+	//Contrutores
 	
 	public T_RECEITA(int cod_receita, int cod_usuario, int cod_categoria, String des_receita, double val_receita,
-			Calendar dat_receita) {
+			LocalDate dat_receita) {
 		super();
 		this.cod_receita = cod_receita;
 		this.cod_usuario = cod_usuario;
@@ -31,7 +31,7 @@ public class T_RECEITA implements Serializable{
 		super();
 	}
 
-
+	//Getter e Setters
 
 	public int getCod_receita() {
 		return cod_receita;
@@ -67,12 +67,13 @@ public class T_RECEITA implements Serializable{
 		this.val_receita = val_receita;
 	}
 	
-	public Calendar getDat_receita() {
+	public LocalDate getDat_receita() {
 		return dat_receita;
 	}
-	public void setDat_receita(Calendar dat_receita) {
+	public void setDat_receita(LocalDate dat_receita) {
 		this.dat_receita = dat_receita;
 	}
+	
 	@Override
 	public String toString() {
 		return "T_RECEITA [cod_receita=" + cod_receita +", cod_usuario=" + cod_usuario + ", cod_categoria=" + cod_categoria + ", des_receita=" + des_receita

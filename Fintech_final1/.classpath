@@ -5,14 +5,10 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v9.0"/>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Apache Tomcat v9.0 (3)">
-		<attributes>
-			<attribute name="owner.project.facets" value="jst.web"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="G:/FIAP-ADS/Graduação/Trabalho_em_Grupo/Fase 6 - Cap 8/TrabalhoFase6Cap8REV2/src/lib/ojdbc11.jar"/>
+	<classpathentry kind="lib" path="drivers/ojdbc11.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

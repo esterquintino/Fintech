@@ -9,8 +9,8 @@ import br.com.fiap.fintech.exception.DBException;
 public class Conexao {
 
     private static final String URL = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:orcl";
-    private static final String USUARIO = "rm99592";
-    private static final String SENHA = "070786";
+    private static final String USUARIO = "rm552358";
+    private static final String SENHA = "190597";
 
     private static Connection conexao;
 
